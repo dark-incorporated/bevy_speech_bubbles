@@ -4,9 +4,9 @@
 
 Speech balloons, barks, conversation graphs and a skinnable dialog box for Bevy games whose characters talk.
 
-[![crates.io](https://img.shields.io/crates/v/bevy_speech_bubbles.svg)](https://crates.io/crates/bevy_speech_bubbles) [![docs.rs](https://img.shields.io/docsrs/bevy_speech_bubbles)](https://docs.rs/bevy_speech_bubbles) [![CI](https://github.com/bevy-coven/bevy_speech_bubbles/actions/workflows/ci.yml/badge.svg)](https://github.com/bevy-coven/bevy_speech_bubbles/actions/workflows/ci.yml) [![Bevy 0.20](https://img.shields.io/badge/bevy-0.20-purple.svg)](https://bevyengine.org) [![licence](https://img.shields.io/badge/licence-MIT%20OR%20Apache--2.0-blue.svg)](#who-and-licence)
+[![crates.io](https://img.shields.io/crates/v/bevy_speech_bubbles.svg)](https://crates.io/crates/bevy_speech_bubbles) [![docs.rs](https://img.shields.io/docsrs/bevy_speech_bubbles)](https://docs.rs/bevy_speech_bubbles) [![CI](https://github.com/dark-incorporated/bevy_speech_bubbles/actions/workflows/ci.yml/badge.svg)](https://github.com/dark-incorporated/bevy_speech_bubbles/actions/workflows/ci.yml) [![Bevy 0.20](https://img.shields.io/badge/bevy-0.20-purple.svg)](https://bevyengine.org) [![licence](https://img.shields.io/badge/licence-MIT%20OR%20Apache--2.0-blue.svg)](#who-and-licence)
 
-![Five coloured figures standing in a ring while the camera orbits; speech balloons with pointed tails and thought balloons with dot-tails appear above them and fade, each holding its face toward the camera](https://raw.githubusercontent.com/bevy-coven/bevy_speech_bubbles/main/docs/chatter.gif)
+![Five coloured figures standing in a ring while the camera orbits; speech balloons with pointed tails and thought balloons with dot-tails appear above them and fade, each holding its face toward the camera](https://raw.githubusercontent.com/dark-incorporated/bevy_speech_bubbles/main/docs/chatter.gif)
 
 *`examples/chatter.rs`: balloons are quads in the scene, not a UI layer, so they float over their speaker, can be hidden behind a wall, and turn to face the camera.*
 
@@ -40,7 +40,7 @@ fn main() {
 }
 ```
 
-Then register a speaker in `Speakers` and write a `Bark` or a `StartConversation` message: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
+Then register a speaker in `Speakers` and write a `Bark` or a `StartConversation` message: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
 
 ## Try it
 
@@ -50,25 +50,25 @@ cargo run --example chatter -- /System/Library/Fonts/Supplemental/Arial.ttf
 
 The GIF above; any `.ttf` works. `dialog_box` shows the screen box with a choice, and `two_balloons` is the smallest thing that works.
 
-![The chatter example: coloured figures on a grey floor, one with a tailed speech balloon reading "I told them the door was open" and one with a thought balloon](https://raw.githubusercontent.com/bevy-coven/bevy_speech_bubbles/main/docs/media/chatter.png)
+![The chatter example: coloured figures on a grey floor, one with a tailed speech balloon reading "I told them the door was open" and one with a thought balloon](https://raw.githubusercontent.com/dark-incorporated/bevy_speech_bubbles/main/docs/media/chatter.png)
 
 *A frame of `chatter`: a spoken line and a thought, each over its speaker.*
 
 ## What you can do
 
-- **Float a balloon over any entity**: spoken lines get a tail and thoughts a dot-tail, tinted by emotion, following the speaker through a hierarchy and hiding with it: [balloons](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/balloons.md).
-- **Write conversations as data**: a `DialogueScript` of lines and choices loaded from RON or any serde format, refused with a useful error on a misspelt key, and checked by `validate_script`: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
-- **Pick how lines are shown**: `Presenter::Balloons` over the speakers' heads, or `Presenter::DialogBox` with a typewriter and choices by click, arrows or number keys: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
-- **Keep the world running**: start a conversation with `Delivery::Unattended` and it takes no lock and no key and closes itself once each line is read, in the same box or balloons as a modal one: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#a-conversation-the-world-does-not-wait-for-deliveryunattended).
-- **Know what a conversation costs**: `DialogueScript::cost` and `fits` count its lines and presses from the script before it starts, `ConversationProgress::presses_to_close` counts them while it runs, `SkipConversation` clears it in one message, and `ConversationEnded` says what was seen: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#how-many-presses-progress-cost-and-skip).
-- **Skin it**: `BalloonSkin` (a CRT phosphor look and pixel-perfect parchment ship) and a 9-sliced `DialogSkin` with portrait and name tag: [what is in it](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/whats-in-it.md).
-- **Pace one-off barks**: `Bark`s with `BarkSettings` limits, for crowds that mutter without a script, and `Speakers::alias` so two keys for one character share its head, name and turn: [conversations](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#one-person-two-keys-speaker-aliases).
-- **Size balloons for your world**: `BalloonScale` sets world units per texel, so feet, metres and a zooming camera all fit: [balloons](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/balloons.md#scale-and-pixel-balloons).
-- **Keep talking while paused**: everything runs on real time, and the dialog's input set consumes the keys it used: [time and input](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/timing.md).
+- **Float a balloon over any entity**: spoken lines get a tail and thoughts a dot-tail, tinted by emotion, following the speaker through a hierarchy and hiding with it: [balloons](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/balloons.md).
+- **Write conversations as data**: a `DialogueScript` of lines and choices loaded from RON or any serde format, refused with a useful error on a misspelt key, and checked by `validate_script`: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
+- **Pick how lines are shown**: `Presenter::Balloons` over the speakers' heads, or `Presenter::DialogBox` with a typewriter and choices by click, arrows or number keys: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md).
+- **Keep the world running**: start a conversation with `Delivery::Unattended` and it takes no lock and no key and closes itself once each line is read, in the same box or balloons as a modal one: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#a-conversation-the-world-does-not-wait-for-deliveryunattended).
+- **Know what a conversation costs**: `DialogueScript::cost` and `fits` count its lines and presses from the script before it starts, `ConversationProgress::presses_to_close` counts them while it runs, `SkipConversation` clears it in one message, and `ConversationEnded` says what was seen: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#how-many-presses-progress-cost-and-skip).
+- **Skin it**: `BalloonSkin` (a CRT phosphor look and pixel-perfect parchment ship) and a 9-sliced `DialogSkin` with portrait and name tag: [what is in it](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/whats-in-it.md).
+- **Pace one-off barks**: `Bark`s with `BarkSettings` limits, for crowds that mutter without a script, and `Speakers::alias` so two keys for one character share its head, name and turn: [conversations](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/conversations.md#one-person-two-keys-speaker-aliases).
+- **Size balloons for your world**: `BalloonScale` sets world units per texel, so feet, metres and a zooming camera all fit: [balloons](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/balloons.md#scale-and-pixel-balloons).
+- **Keep talking while paused**: everything runs on real time, and the dialog's input set consumes the keys it used: [time and input](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/timing.md).
 
-## Part of the Coven
+## Part of Dark Inc.
 
-`bevy_speech_bubbles` is one of the [Bevy Coven](https://github.com/bevy-coven) crates: [`bevy_society`](https://crates.io/crates/bevy_society)'s villagers speak through it. The Cauldron, the Coven's editor, stores barks and conversations with this crate's own types: [use it in the Cauldron](https://bevy-coven.github.io/crates/bevy_speech_bubbles.html#use-it-in-the-cauldron).
+`bevy_speech_bubbles` is one of the [Dark Inc.](https://github.com/dark-incorporated) crates: [`bevy_society`](https://crates.io/crates/bevy_society)'s villagers speak through it. The Dark Factory, Dark Inc.'s editor, stores barks and conversations with this crate's own types: [use it in the Dark Factory](https://dark-incorporated.github.io/crates/bevy_speech_bubbles.html#use-it-in-the-dark-factory).
 
 ## Bevy compatibility
 
@@ -79,12 +79,12 @@ The GIF above; any `.ttf` works. `dialog_box` shows the screen box with a choice
 ## Learn more
 
 - [docs.rs/bevy_speech_bubbles](https://docs.rs/bevy_speech_bubbles): the API.
-- [The book page](https://bevy-coven.github.io/crates/bevy_speech_bubbles.html).
-- [`docs/guide/`](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/docs/guide/README.md): everything the old README carried, in five pages.
-- [`examples/`](https://github.com/bevy-coven/bevy_speech_bubbles/tree/main/examples) and [`CHANGELOG.md`](https://github.com/bevy-coven/bevy_speech_bubbles/blob/main/CHANGELOG.md).
+- [The book page](https://dark-incorporated.github.io/crates/bevy_speech_bubbles.html).
+- [`docs/guide/`](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/docs/guide/README.md): everything the old README carried, in five pages.
+- [`examples/`](https://github.com/dark-incorporated/bevy_speech_bubbles/tree/main/examples) and [`CHANGELOG.md`](https://github.com/dark-incorporated/bevy_speech_bubbles/blob/main/CHANGELOG.md).
 
 ## Who and licence
 
-Maintained by [@Ladvien](https://github.com/Ladvien). This repository is canonical and co-evolves with the game it was built for, Sanctuary; issues and pull requests belong at [github.com/bevy-coven/bevy_speech_bubbles/issues](https://github.com/bevy-coven/bevy_speech_bubbles/issues), and contributions follow the org's [CONTRIBUTING.md](https://github.com/bevy-coven/.github/blob/main/CONTRIBUTING.md).
+Maintained by [@Ladvien](https://github.com/Ladvien). This repository is canonical and co-evolves with the game it was built for, Sanctuary; issues and pull requests belong at [github.com/dark-incorporated/bevy_speech_bubbles/issues](https://github.com/dark-incorporated/bevy_speech_bubbles/issues), and contributions follow the org's [CONTRIBUTING.md](https://github.com/dark-incorporated/.github/blob/main/CONTRIBUTING.md).
 
 MIT OR Apache-2.0, at your option.

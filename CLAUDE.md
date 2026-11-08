@@ -14,7 +14,7 @@ When one of these seems necessary, stop and ask. Name the exact command, what it
 
 ## Source of truth
 
-This repository, [`bevy-coven/bevy_speech_bubbles`](https://github.com/bevy-coven/bevy_speech_bubbles), is canonical. MIT OR Apache-2.0. It co-evolves with Sanctuary (`/Users/ladvien/sanctuary`, a path dependency): fixes and features land here first, in their own commit with tests here, and are never patched into the game. Run `cargo test` here before pushing and in Sanctuary before relying on the change.
+This repository, [`dark-incorporated/bevy_speech_bubbles`](https://github.com/dark-incorporated/bevy_speech_bubbles), is canonical. MIT OR Apache-2.0. It co-evolves with Sanctuary (`/Users/ladvien/sanctuary`, a path dependency): fixes and features land here first, in their own commit with tests here, and are never patched into the game. Run `cargo test` here before pushing and in Sanctuary before relying on the change.
 
 ## Layout
 
@@ -55,4 +55,4 @@ This repository, [`bevy-coven/bevy_speech_bubbles`](https://github.com/bevy-cove
 - In tests, `ButtonInput::clear()` drops `just_pressed` only: also `release` a key before pressing it again.
 - To assert a `warn!` in a test, record events with a `bevy::log::tracing_subscriber::Layer` inside `bevy::log::tracing::subscriber::with_default`, and set the schedules that log (`PreUpdate`, `Update`) to `SingleThreadedExecutor` (`schedule.set_executor(..)`): a multithreaded executor logs on a pool thread the scoped subscriber never sees. `tests/walk.rs`'s `warned` module is the pattern.
 
-README and docs follow https://github.com/bevy-coven/.github/blob/main/DOCUMENTATION.md; a feature is not done until its README line and, if visible, its GIF exist.
+README and docs follow https://github.com/dark-incorporated/.github/blob/main/DOCUMENTATION.md; a feature is not done until its README line and, if visible, its GIF exist.

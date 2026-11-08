@@ -1,6 +1,6 @@
 # Conversations, barks and presenters
 
-Moved from the README on 2026-10-31, unchanged, when the README was brought to the [org documentation guide](https://github.com/bevy-coven/.github/blob/main/DOCUMENTATION.md).
+Moved from the README on 2026-10-31, unchanged, when the README was brought to the [org documentation guide](https://github.com/dark-incorporated/.github/blob/main/DOCUMENTATION.md).
 
 ```rust,ignore
 app.add_plugins(SpeechBubblesPlugin::<MyCamera>::default())
