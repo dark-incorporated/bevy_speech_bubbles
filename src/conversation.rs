@@ -460,6 +460,16 @@ pub enum Presenter {
     DialogBox,
 }
 
+/// The conversation a piece starts: an authoring component, one a placed prop carries in a blueprint.
+///
+/// **Nothing in this crate acts on it.** The crate never decides when a conversation starts; the host
+/// reads it from the piece (a click, a trigger volume, the player walking up) and triggers a
+/// [`StartConversation`] for the name it holds. It is `Reflect`, `Default` and serde so an editor can
+/// add it to a piece and save it, and [`SpeechBubblesPlugin`](crate::SpeechBubblesPlugin) registers it.
+#[derive(Component, Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize, Reflect)]
+#[reflect(Component, Default, Serialize, Deserialize)]
+pub struct StartsConversation(pub String);
+
 /// Start (or ignore, if one is already running) the named conversation, delivered as `delivery` says.
 /// `StartConversation { id: "gate".into(), ..default() }` is a [`Delivery::Modal`] one.
 #[derive(Message, Debug, Clone, Default)]
@@ -584,8 +594,9 @@ pub struct Bark {
 ///
 /// Serde, like [`Bark`]: a key this struct does not have (`max_live`) is a parse error, not a setting
 /// that was read and ignored.
-#[derive(Resource, Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Resource, Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Reflect)]
+#[serde(deny_unknown_fields, default)]
+#[reflect(Resource, Default, Serialize, Deserialize)]
 pub struct BarkSettings {
     /// Minimum seconds between two balloons appearing.
     pub gap: f32,

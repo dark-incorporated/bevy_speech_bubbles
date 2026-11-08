@@ -6,6 +6,15 @@ All notable changes to this crate are recorded here. The format follows
 
 ## [Unreleased]
 
+Meets the family's machine plate (`dark-incorporated/.github/docs/STYLE.md`):
+
+### Added
+
+- `SpeechBubblesSystems`: every system the plugin adds is in it (`DialogInputSet` is configured into it in `PreUpdate`, the cosmetic systems are in it in `Update`).
+- `StartsConversation(pub String)`, an authoring component: the conversation a piece starts. `Reflect`, `Default` and serde, registered by the plugin; nothing in the crate acts on it, the host triggers `StartConversation` for it.
+- `BarkSettings` is a settings resource: `Reflect` with `reflect(Resource, Default, Serialize, Deserialize)`, `#[serde(default)]`, registered by the plugin. `Bubble`, `BubblePx`, `BubbleOffsetPx` and `BubbleTtl` derive `Reflect` and are registered.
+- `tests/machine_plate.rs`.
+
 ## [0.3.0] - 2026-11-06
 
 ### Changed

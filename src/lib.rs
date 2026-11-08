@@ -70,10 +70,10 @@ pub use conversation::{
     Bark, BarkQueue, BarkSettings, Choice, ChoicePicked, Conversation, ConversationCost,
     ConversationEnded, ConversationLock, ConversationProgress, CostError, Delivery,
     DialogueNodeEntered, DialogueScript, Node, Presenter, PressRule, SkipConversation, Speaker,
-    Speakers, StartConversation, validate_script,
+    Speakers, StartConversation, StartsConversation, validate_script,
 };
 pub use dialog_box::{ChoiceFocus, DEFAULT_CHARS_PER_SECOND, DIALOG_Z, DialogSkin};
-pub use plugin::{DialogInputSet, SpeechBubblesPlugin};
+pub use plugin::{DialogInputSet, SpeechBubblesPlugin, SpeechBubblesSystems};
 pub use style::{BubbleKind, Emotion};
 
 // The README's quick start is compiled as a doctest, so it cannot drift from the API.

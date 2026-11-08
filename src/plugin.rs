@@ -6,11 +6,13 @@ use std::marker::PhantomData;
 use bevy::input::InputSystems;
 use bevy::prelude::*;
 
-use crate::balloon::{BalloonScale, DefaultBalloonSkin, expire_bubbles, track_bubbles};
+use crate::balloon::{
+    BalloonScale, Bubble, BubbleOffsetPx, BubblePx, BubbleTtl, DefaultBalloonSkin, expire_bubbles, track_bubbles,
+};
 use crate::conversation::{
     Bark, BarkQueue, BarkSettings, ChoicePicked, ConversationEnded, ConversationProgress,
     DialogueNodeEntered, DialogueScript, Presenter, SkipConversation, Speakers, StartConversation,
-    advance_line, choice_hotkeys, open_conversation, present_current, queue_barks, release_bark,
+    StartsConversation, advance_line, choice_hotkeys, open_conversation, present_current, queue_barks, release_bark,
     resolve_choice, sync_progress,
 };
 use crate::dialog_box::{
@@ -24,12 +26,19 @@ use crate::dialog_box::{
 #[derive(SystemSet, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct DialogInputSet;
 
+/// The one set every system this crate adds is in: [`DialogInputSet`] (`PreUpdate`) and the cosmetic
+/// systems (`Update`). A host orders against it with `.before(SpeechBubblesSystems)` or
+/// `.after(SpeechBubblesSystems)`, or runs it conditionally with `run_if`.
+#[derive(SystemSet, Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct SpeechBubblesSystems;
+
 /// Dialog kit plugin. `C` is the marker component of the camera the balloons face — name a marker you
 /// control (see [`track_bubbles`]); the crate never guesses one.
 ///
 /// Registers [`StartConversation`], [`SkipConversation`], [`ChoicePicked`], [`ConversationEnded`], [`DialogueNodeEntered`] and [`Bark`], and inserts
 /// [`Speakers`], [`DialogueScript`], [`BarkQueue`], [`BarkSettings`], [`DefaultBalloonSkin`], [`BalloonScale`],
-/// [`ChoiceFocus`] and [`Presenter::Balloons`] (insert your own after adding the plugin to override).
+/// [`ChoiceFocus`] and [`Presenter::Balloons`] (insert your own after adding the plugin to override),
+/// and registers [`BarkSettings`] and [`StartsConversation`] with reflection.
 /// The runtime runs in `PreUpdate` ([`DialogInputSet`]) and consumes the presses it uses; the cosmetic
 /// systems (typewriter, caret, balloon tracking and expiry) run in `Update`. It loads no font and no script: the host inserts
 /// [`BubbleAssets`](crate::BubbleAssets) and fills [`DialogueScript`] and [`Speakers`]; a
@@ -58,6 +67,13 @@ impl<C: Component> Plugin for SpeechBubblesPlugin<C> {
             .init_resource::<BalloonScale>()
             .init_resource::<ChoiceFocus>()
             .insert_resource(Presenter::Balloons)
+            .register_type::<BarkSettings>()
+            .register_type::<StartsConversation>()
+            .register_type::<Bubble>()
+            .register_type::<BubblePx>()
+            .register_type::<BubbleOffsetPx>()
+            .register_type::<BubbleTtl>()
+            .configure_sets(PreUpdate, DialogInputSet.in_set(SpeechBubblesSystems))
             // The runtime reads input and moves the conversation along in `PreUpdate`, right after
             // Bevy's input systems, and consumes the presses it uses (`clear_just_pressed`). A host
             // orders its own `PreUpdate` systems `.after(DialogInputSet)` and never sees a key the
@@ -98,7 +114,8 @@ impl<C: Component> Plugin for SpeechBubblesPlugin<C> {
                     // executor without scheduling it.
                     sync_progress.run_if(resource_exists::<ConversationProgress>),
                 )
-                    .chain(),
+                    .chain()
+                    .in_set(SpeechBubblesSystems),
             );
     }
 }

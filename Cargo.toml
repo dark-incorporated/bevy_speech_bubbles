@@ -42,5 +42,5 @@ unicode-segmentation = "1"
 # pipeline, so they take the full umbrella here, where it cannot reach a consumer's dependency graph.
 # `ron` parses the scripts in tests. `tests/leaf.rs` reads `[dependencies]` only, deliberately.
 [dev-dependencies]
-bevy = { version = "0.20.0" }
+bevy = { version = "0.20.0", features = ["debug"] } # `debug` gives systems their full names for tests/machine_plate.rs
 ron = "0.12"

@@ -55,7 +55,8 @@ pub fn dwell_secs(text: &str) -> f32 {
 
 /// A bubble entity's link to the unit it floats over, plus an in-plane offset (camera right/up) used
 /// to stack a choice menu without overlap. Zero offset for a normal single bubble.
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct Bubble {
     pub owner: Entity,
     pub offset: Vec2,
@@ -65,12 +66,14 @@ pub struct Bubble {
 /// `px * BalloonScale::world_per_px` every frame, so a host that changes the scale as its camera
 /// zooms resizes every live balloon. A bubble without this component keeps the scale it was spawned
 /// with.
-#[derive(Component, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Eq, Reflect)]
+#[reflect(Component)]
 pub struct BubblePx(pub UVec2);
 
 /// An in-plane offset (camera right/up) in texels, for stacking a choice menu. When present it
 /// replaces [`Bubble::offset`] and is converted to world units by [`BalloonScale`] every frame.
-#[derive(Component, Debug, Clone, Copy, PartialEq)]
+#[derive(Component, Debug, Clone, Copy, PartialEq, Reflect)]
+#[reflect(Component)]
 pub struct BubbleOffsetPx(pub Vec2);
 
 /// How big balloons are in the host's world and how high they float. The host owns the units: a world
@@ -98,7 +101,8 @@ impl Default for BalloonScale {
 }
 
 /// Auto-expiry for ambient (non-modal) bubbles.
-#[derive(Component)]
+#[derive(Component, Reflect)]
+#[reflect(Component)]
 pub struct BubbleTtl {
     pub expires_at: f32,
 }

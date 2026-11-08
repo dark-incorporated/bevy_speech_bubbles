@@ -23,8 +23,8 @@ This repository, [`dark-incorporated/bevy_speech_bubbles`](https://github.com/da
 - `src/style.rs` — `BubbleKind`, `Emotion`.
 - `src/conversation.rs` — the model (`DialogueScript`, `Conversation`, `Node`, `Choice`, `validate_script`), `Speakers`, `Presenter`, the messages (`DialogueNodeEntered` included, written at the three cursor moves: open, advance, choice), `Active` (private), the balloon presenter, `Bark`, `BarkQueue`, `BarkSettings`.
 - `src/dialog_box.rs` — `DialogSkin`, the screen box, typewriter, caret, choices.
-- `src/plugin.rs` — `SpeechBubblesPlugin<C>`.
-- `tests/leaf.rs` — the boundary ratchet. `tests/walk.rs` — the headless walk through the plugin. `tests/data/` — a test font.
+- `src/plugin.rs` — `SpeechBubblesPlugin<C>`, `SpeechBubblesSystems`, `DialogInputSet`.
+- `tests/leaf.rs` — the boundary ratchet. `tests/walk.rs` — the headless walk through the plugin. `tests/machine_plate.rs` — every system is in `SpeechBubblesSystems`, the settings and components are reflected. `tests/data/` — a test font.
 
 ## Build and test
 
