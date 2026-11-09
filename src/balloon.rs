@@ -1005,6 +1005,145 @@ mod tests {
         assert!((tf.translation.y - (4.0 + 0.4 + 0.2)).abs() < 0.01, "{:?}", tf.translation);
     }
 
+    // ----- owners in a hierarchy (#10) -----
+
+    /// A balloon on `owner`, raster 100x40 texels, at the default scale.
+    fn balloon_on(app: &mut App, owner: Entity) -> Entity {
+        app.world_mut()
+            .spawn((
+                Bubble {
+                    owner,
+                    offset: Vec2::ZERO,
+                },
+                BubblePx(UVec2::new(100, 40)),
+                Transform::default(),
+                Visibility::default(),
+            ))
+            .id()
+    }
+
+    /// **A speaker that is a child entity gets its balloon over its world position**, not at its
+    /// parent-relative offset from the world origin (#10's input).
+    #[test]
+    fn a_child_owner_gets_its_balloon_over_its_world_position() {
+        let mut app = App::new();
+        app.add_plugins(TransformPlugin)
+            .add_systems(Update, track_bubbles::<Cam>);
+        app.world_mut()
+            .spawn((Cam, GlobalTransform::from(Transform::from_xyz(10.0, 1.0, 1000.0))));
+        let parent = app
+            .world_mut()
+            .spawn((Transform::from_xyz(10.0, 0.0, 0.0), Visibility::default()))
+            .id();
+        let owner = app
+            .world_mut()
+            .spawn((Transform::default(), Visibility::default(), ChildOf(parent)))
+            .id();
+        let balloon = balloon_on(&mut app, owner);
+        app.update();
+        let tf = app.world().get::<Transform>(balloon).expect("balloon");
+        assert!((tf.translation.x - 10.0).abs() < 0.05, "{:?}", tf.translation);
+    }
+
+    /// **The anchor is the owner's world position in the frame it is tracked**: through a translated,
+    /// rotated and scaled grandparent and parent it equals the `GlobalTransform` Bevy propagates for
+    /// the owner at the end of the same update, also on the frame the grandparent moves (no frame of
+    /// lag behind propagation).
+    #[test]
+    fn a_nested_owner_anchors_at_its_propagated_world_position_in_the_same_frame() {
+        let mut app = App::new();
+        app.add_plugins(TransformPlugin)
+            .add_systems(Update, track_bubbles::<Cam>);
+        let cam = Vec3::new(-3.0, 4.0, 900.0);
+        app.world_mut()
+            .spawn((Cam, GlobalTransform::from(Transform::from_translation(cam))));
+        let grandparent = app
+            .world_mut()
+            .spawn((
+                Transform::from_xyz(4.0, 1.0, -2.0)
+                    .with_rotation(Quat::from_rotation_y(0.7))
+                    .with_scale(Vec3::splat(2.0)),
+                Visibility::default(),
+            ))
+            .id();
+        let parent = app
+            .world_mut()
+            .spawn((
+                Transform::from_xyz(1.5, 0.25, 0.0).with_rotation(Quat::from_rotation_z(0.4)),
+                Visibility::default(),
+                ChildOf(grandparent),
+            ))
+            .id();
+        let owner = app
+            .world_mut()
+            .spawn((Transform::from_xyz(0.0, 1.0, 0.5), Visibility::default(), ChildOf(parent)))
+            .id();
+        let balloon = balloon_on(&mut app, owner);
+        let scale = BalloonScale::default();
+
+        let check = |app: &App, when: &str| {
+            let world_pos = app.world().get::<GlobalTransform>(owner).expect("owner").translation();
+            let anchor = world_pos + Vec3::Y * scale.anchor_y;
+            let half_h = 40.0 * scale.world_per_px * 0.5;
+            let expected = anchor + Vec3::Y * half_h + (cam - anchor).normalize() * CAMERA_NUDGE;
+            let got = app.world().get::<Transform>(balloon).expect("balloon").translation;
+            assert!(
+                got.distance(expected) < 1e-4,
+                "{when}: balloon at {got:?}, owner's world position {world_pos:?} wants {expected:?}"
+            );
+        };
+
+        app.update();
+        check(&app, "first frame");
+        app.world_mut()
+            .get_mut::<Transform>(grandparent)
+            .expect("grandparent")
+            .translation += Vec3::new(-6.0, 0.5, 3.0);
+        app.update();
+        check(&app, "the frame the grandparent moved");
+    }
+
+    /// **A balloon shows exactly when its owner would**, by Bevy's inheritance rule: hidden with a
+    /// hidden parent, back with it, and shown for an owner set `Visible` under a hidden parent.
+    #[test]
+    fn a_balloon_hides_with_its_owners_parent() {
+        use bevy::camera::visibility::VisibilityPlugin;
+
+        let mut app = App::new();
+        app.add_plugins((MinimalPlugins, AssetPlugin::default(), TransformPlugin, VisibilityPlugin))
+            .init_asset::<Mesh>()
+            .init_asset::<bevy::mesh::skinning::SkinnedMeshInverseBindposes>()
+            .add_systems(Update, track_bubbles::<Cam>);
+        app.world_mut().spawn((Cam, GlobalTransform::default()));
+        let parent = app
+            .world_mut()
+            .spawn((Transform::from_xyz(10.0, 0.0, 0.0), Visibility::default()))
+            .id();
+        let owner = app
+            .world_mut()
+            .spawn((Transform::default(), Visibility::default(), ChildOf(parent)))
+            .id();
+        let balloon = balloon_on(&mut app, owner);
+        let shown = |app: &App| app.world().get::<InheritedVisibility>(balloon).expect("balloon").get();
+
+        app.update();
+        assert!(shown(&app), "a visible owner's balloon is visible");
+
+        *app.world_mut().get_mut::<Visibility>(parent).expect("parent") = Visibility::Hidden;
+        app.update();
+        assert!(!app.world().get::<InheritedVisibility>(owner).expect("owner").get());
+        assert!(!shown(&app), "the owner is hidden through its parent, so is its balloon");
+
+        *app.world_mut().get_mut::<Visibility>(owner).expect("owner") = Visibility::Visible;
+        app.update();
+        assert!(shown(&app), "an owner set Visible shows under a hidden parent, and so does its balloon");
+
+        *app.world_mut().get_mut::<Visibility>(owner).expect("owner") = Visibility::Inherited;
+        *app.world_mut().get_mut::<Visibility>(parent).expect("parent") = Visibility::Inherited;
+        app.update();
+        assert!(shown(&app), "the parent shown again, the balloon is back");
+    }
+
     /// A bubble without a `BubblePx` (a host that spawns its own quads) keeps the scale it was given.
     #[test]
     fn a_bubble_without_a_raster_size_keeps_its_scale() {
