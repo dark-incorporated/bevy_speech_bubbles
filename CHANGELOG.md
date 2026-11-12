@@ -6,6 +6,10 @@ All notable changes to this crate are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- A balloon spawned by a `Presenter::Balloons` line, a choice, or a bark now carries the `Visibility` that `track_bubbles` reads. It had none, so the balloon was never tracked: it stayed at the origin with its spawn scale instead of following its speaker.
+
 ## [0.3.0] - 2026-11-06
 
 ### Changed

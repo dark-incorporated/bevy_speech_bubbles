@@ -55,7 +55,11 @@ pub fn dwell_secs(text: &str) -> f32 {
 
 /// A bubble entity's link to the unit it floats over, plus an in-plane offset (camera right/up) used
 /// to stack a choice menu without overlap. Zero offset for a normal single bubble.
+///
+/// `Visibility` is required: [`track_bubbles`] reads it to follow the owner and hide with it, and a
+/// bubble spawned without one is never tracked.
 #[derive(Component)]
+#[require(Visibility)]
 pub struct Bubble {
     pub owner: Entity,
     pub offset: Vec2,
@@ -908,6 +912,25 @@ mod tests {
     #[test]
     fn dwell_has_floor() {
         assert!((dwell_secs("hi") - DWELL_FLOOR).abs() < 1.0e-6);
+    }
+
+    /// `track_bubbles` reads a balloon's `Visibility`; one spawned with only `Bubble` used to have
+    /// none, so the query skipped it and the balloon stayed at the origin with its initial scale.
+    #[test]
+    fn bubble_carries_the_visibility_tracking_reads() {
+        let mut app = App::new();
+        let owner = app.world_mut().spawn_empty().id();
+        let bubble = app
+            .world_mut()
+            .spawn(Bubble {
+                owner,
+                offset: Vec2::ZERO,
+            })
+            .id();
+        assert_eq!(
+            app.world().get::<Visibility>(bubble),
+            Some(&Visibility::Inherited)
+        );
     }
 
     #[test]
